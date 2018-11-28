@@ -8,7 +8,7 @@ import { AlertIOS, Platform, NativeModules } from 'react-native';
 
 const SimpleAlertAndroid = NativeModules.SimpleAlertAndroid;
 
-const Buttons = {
+let Buttons = {
     POSITIVE_BUTTON: "POSITIVE_BUTTON",
     NEGATIVE_BUTTON: "NEGATIVE_BUTTON",
     NEUTRAL_BUTTON: "NEUTRAL_BUTTON",
@@ -27,22 +27,22 @@ const SimpleAlert = {
     [Buttons.NEGATIVE_BUTTON]: Buttons.NEGATIVE_BUTTON,
     [Buttons.NEUTRAL_BUTTON]: Buttons.NEUTRAL_BUTTON,
     alert(title, text, buttonConfig) {
-        let _buttonConfig = (buttonConfig||[{ type: SimpleAlert.POSITIVE_BUTTON, text: 'OK', }]);
+        let _buttonConfig = (buttonConfig || [{ type: SimpleAlert.POSITIVE_BUTTON, text: 'OK', }]);
         if (Platform.OS === 'ios') {
-            for(let j=0; j<_buttonConfig.length; j++) {
-                if("type" && _buttonConfig[j]) delete _buttonConfig[j]['type'];
+            for (let j = 0; j < _buttonConfig.length; j++) {
+                if ("type" && _buttonConfig[j]) delete _buttonConfig[j]['type'];
             }
             AlertIOS.alert.apply(AlertIOS, [title, text, _buttonConfig]);
         } else {
             let _masterCallback = (buttonType) => {
-                for(let j=0; j<_buttonConfig.length; j++) {
-                    if("type" && _buttonConfig[j] && _buttonConfig[j].type === buttonType && ("onPress" in _buttonConfig[j] && typeof _buttonConfig[j].onPress == "function")) {
-                        _buttonConfig[j].onPress.apply(null, [{type: buttonType}]);
+                for (let j = 0; j < _buttonConfig.length; j++) {
+                    if ("type" && _buttonConfig[j] && _buttonConfig[j].type === buttonType && ("onPress" in _buttonConfig[j] && typeof _buttonConfig[j].onPress == "function")) {
+                        _buttonConfig[j].onPress.apply(null, [{ type: buttonType }]);
                     }
                 }
             };
 
-            SimpleAlertAndroid.alert((title||null), (text||null), _buttonConfig, _masterCallback);
+            SimpleAlertAndroid.alert((title || null), (text || null), _buttonConfig, _masterCallback);
         }
     }
 };
